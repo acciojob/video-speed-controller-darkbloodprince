@@ -1,48 +1,45 @@
-const player = document.querySelector('.player');
-const video = player.querySelector('.viewer');
-const progress = player.querySelector('.progress');
-const progressFilled = player.querySelector('.progress__filled');
-const toggle = player.querySelector('.toggle');
-const skipButtons = player.querySelectorAll('.skip');
-const ranges = player.querySelectorAll('.controls input');
+const video = document.querySelector('.player__video');
+const toggle = document.querySelector('.toggle');
+const progressFilled = document.querySelector('.progress__filled');
+const progress = document.querySelector('.progress');
+const rewind = document.querySelector('.rewind');
+const forward = document.querySelector('.forward');
+const ranges = document.querySelectorAll('input[type="range"]');
 
 // Play / Pause
 function togglePlay() {
-  if (video.paused) {
-    video.play();
-  } else {
-    video.pause();
-  }
+  if (video.paused) video.play();
+  else video.pause();
 }
 
-// Update button icon
+// Update button
 function updateButton() {
   toggle.textContent = video.paused ? '►' : '❚ ❚';
 }
 
-// Update progress bar
+// Progress bar update
 function handleProgress() {
   const percent = (video.currentTime / video.duration) * 100;
   progressFilled.style.width = percent + '%';
 }
 
-// Scrub video
+// Scrub
 function scrub(e) {
   const scrubTime = (e.offsetX / progress.offsetWidth) * video.duration;
   video.currentTime = scrubTime;
 }
 
-// Skip buttons
-function skip() {
-  video.currentTime += parseFloat(this.dataset.skip);
+// Skip
+function skip(amount) {
+  video.currentTime += amount;
 }
 
-// Range inputs (volume, playback speed)
+// Range controls
 function handleRangeUpdate() {
   video[this.name] = this.value;
 }
 
-// Event listeners
+// Events
 video.addEventListener('click', togglePlay);
 video.addEventListener('play', updateButton);
 video.addEventListener('pause', updateButton);
@@ -50,7 +47,9 @@ video.addEventListener('timeupdate', handleProgress);
 
 toggle.addEventListener('click', togglePlay);
 
-skipButtons.forEach(btn => btn.addEventListener('click', skip));
-ranges.forEach(range => range.addEventListener('change', handleRangeUpdate));
+rewind.addEventListener('click', () => skip(-10));
+forward.addEventListener('click', () => skip(25));
+
+ranges.forEach(r => r.addEventListener('change', handleRangeUpdate));
 
 progress.addEventListener('click', scrub);
